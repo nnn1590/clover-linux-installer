@@ -72,18 +72,17 @@ done
 echo>&2
 echo 'Starting installation.'>&2
 
-if [ ! -e Clover.zip ]
+if [ ! -e Clover.pkg ]
 then
-    log curl -o Clover.zip.part -C - -L https://sourceforge.net/projects/cloverefiboot/files/latest/download
-    log mv Clover.zip.part Clover.zip
+    log curl -o Clover.pkg.part -C - -L $(curl -s https://api.github.com/repos/CloverHackyColor/CloverBootloader/releases/latest | grep '/Clover.*\.pkg' | cut -d : -f 2,3 | tr -d \" | sed -e's/^ //')
+    log mv Clover.pkg.part Clover.pkg
 fi
 
 log sudo umount Clover/work/mnt || true
 log rm -rf Clover/
 log mkdir Clover
-log 7z x -oClover Clover.zip
 log mkdir Clover/Clover.pkg
-log 7z x -oClover/Clover.pkg Clover/Clover_*.pkg
+log 7z x -oClover/Clover.pkg Clover.pkg
 for pkg in Clover/Clover.pkg/*.pkg
 do
     extract_pkg "$(basename "$pkg" .pkg)"
